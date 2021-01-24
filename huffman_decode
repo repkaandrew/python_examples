@@ -1,0 +1,56 @@
+"""
+2. Закодируйте любую строку по алгоритму Хаффмана.
+"""
+from collections import Counter, deque
+
+
+def huff_encode(string: str) -> dict:
+	"""
+	Функция преобразует строку в словарь и вызывает подфункцию huffman
+	:param string:
+	:return: словарь с закодированными элементами
+	"""
+	assert len(string) > 0, 'Strings must be at least 1 char'
+
+	def huffman(fr_dict):
+		"""
+		Функция кодирует символы, переданные во входном словаре
+		:param fr_dict:
+		:return: словарь с закодированными символами
+		"""
+		# базовый случай - пришли к вершине дерева
+		if len(fr_dict) == 2:
+			# после прихода к вершине меняем значения на '0' и '1'
+			fr_dict = dict(zip(fr_dict.keys(), ['0', '1']))
+			return fr_dict
+
+		else:
+			# след. 5 строк повторяются пока не придем к базовому варианту - сортируем, вытягиваем два младших
+			# елемента, и добавляем новый элемент в словарь (ключ - сумма ключей, значение - сумма значений)
+			sorted_dict = sorted(fr_dict.items(), key=lambda elm: elm[1])
+			first_key, second_key = sorted_dict[0][0], sorted_dict[1][0]
+			first_elm, second_elm = fr_dict.pop(first_key), fr_dict.pop(second_key)
+			fr_dict[first_key + second_key] = first_elm + second_elm
+			res_dict = huffman(fr_dict)
+
+			# после всех итераций восстанавливаем дерево
+			# удаляем узел, который перед этим создали
+			root = res_dict.pop(first_key + second_key)
+			# восстанавливаем ветки только уже с новыми значениями (будут в бинарном коде)
+			res_dict[first_key], res_dict[second_key] = root + '0', root + '1'
+			return res_dict
+
+	return huffman(dict(Counter(string)))
+
+
+def main():
+	string = input('Ведите исходную строку: ')
+	# string = 'beep boop beer!'
+	encode_dict = huff_encode(string)
+	print(
+		f'Исходные значения для элементов строки \t\t\t {sorted(dict(Counter(string)).items(), key=lambda elm: elm[0])}')
+	print(f'Закодированные значения для элементов строки \t {sorted(encode_dict.items(), key=lambda elm: elm[0])}')
+
+
+if __name__ == '__main__':
+	main()
