@@ -1,0 +1,60 @@
+"""
+2. Отсортируйте по возрастанию методом слияния одномерный вещественный массив, заданный случайными числами
+на промежутке [0; 50). Выведите на экран исходный и отсортированный массивы.
+"""
+import random
+
+
+def merge_sort(ary):
+	"""
+	Сортировка слиянием
+	:param ary: list
+	:return: list
+	"""
+	# Базовый случай
+	if len(ary) <= 1:
+		return ary
+	# Разделяем массив надвое
+	mid = len(ary) // 2
+	low_ary = ary[:mid]
+	up_ary = ary[mid:]
+	# Сортируем половинки
+	merge_sort(low_ary)
+	merge_sort(up_ary)
+	# Собираем новый массив из уже отсортированных половинок
+	i = j = k = 0
+	while i < len(low_ary) and j < len(up_ary):
+		if low_ary[i] < up_ary[j]:
+			ary[k] = low_ary[i]
+			i, k = i + 1, k + 1
+		else:
+			ary[k] = up_ary[j]
+			j, k = j + 1, k + 1
+	# Дозаполняем массив
+	while i < len(low_ary):
+		ary[k] = low_ary[i]
+		i, k = i + 1, k + 1
+	while j < len(up_ary):
+		ary[k] = up_ary[j]
+		j, k = j + 1, k + 1
+	return ary
+
+
+def print_array(ary):
+	for item in ary:
+		print(f'{item:4.2f}', end='\t')
+	print()
+
+
+def main():
+	ary = [random.random() * 50 for _ in range(50)]
+	print('Исходный массив вещественных чисел:')
+	print_array(ary)
+	merge_ary = merge_sort(ary[:])
+	print('Отсортированный массив вещественных чисел:')
+	print_array(merge_ary)
+	print(f'Сортировка выполнена корректно - {sorted(ary) == merge_ary}')
+
+
+if __name__ == '__main__':
+	main()
