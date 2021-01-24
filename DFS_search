@@ -1,0 +1,73 @@
+"""
+3. Написать программу, которая обходит не взвешенный ориентированный граф без петель,
+в котором все вершины связаны, по алгоритму поиска в глубину (Depth-First Search).
+Примечания:
+a. граф должен храниться в виде списка смежности;
+b. генерация графа выполняется в отдельной функции, которая принимает на вход число вершин.
+"""
+import collections
+import random
+
+
+def create_graph(num: int) -> dict:
+	"""
+	Функция генерации не взвешенного ориентированного графа без петель,
+	вероятность получения изолированной вершины очень мала
+	:param num:
+	:return:
+	"""
+	graph = collections.defaultdict(list)
+	for i in range(num):
+		for j in range(num):
+			spam = random.randrange(0, num)
+			if spam != i and spam not in graph[i]:
+				graph[i].append(spam)
+		graph[i].sort()
+	return graph
+
+
+def do_dfs(graph, node):
+	"""
+	Функция обхода графа методом поиска в глубину
+	:param graph:
+	:param node: опорный узел
+	:return: turple (пути обхода вершин, список с отметками о прохождении, порядок прохождения вешин)
+	"""
+	length = len(graph)
+	is_visited = [False] * length
+	path = []
+	path_vert_order = collections.deque()
+	for _ in range(length):
+		path.append([])
+	is_visited[node] = True
+	path_vert_order.append(node)
+	path[node] = [node]
+
+	def dfs(node, parent):
+		if not is_visited[node]:
+			path_vert_order.append(node)
+			is_visited[node] = True
+			path[node] = path[parent] + [node]
+			for neighbour in graph[node]:
+				dfs(neighbour, node)
+
+	for vertex in graph[node]:
+		dfs(vertex, node)
+
+	return path, is_visited, path_vert_order
+
+
+def main():
+	graph = create_graph(int(input('Введите число вершин графа ')))
+	print(f'Исходный граф {dict(graph)}')
+	res = do_dfs(graph, int(input('Введите опорную вершину для прохождения графа ')))
+	# print(res)
+
+	print(f'Все вершины пройдены {False not in res[1]}')
+	print(f'Порядок прохождения вершин {list(res[2])}')
+	for i in range(len(graph)):
+		print(f'Путь к вершине {i} : {res[0][i]}')
+
+
+if __name__ == '__main__':
+	main()
