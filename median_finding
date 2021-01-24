@@ -1,0 +1,50 @@
+"""
+3. Массив размером 2m + 1, где m — натуральное число, заполнен случайным образом. Найдите в массиве медиану.
+Медианой называется элемент ряда, делящий его на две равные части: в одной находятся элементы,
+которые не меньше медианы, в другой — не больше медианы.
+Примечание: задачу можно решить без сортировки исходного массива. Но если это слишком сложно,
+используйте метод сортировки, который не рассматривался на уроках (сортировка слиянием также недопустима).
+"""
+import random
+from collections import namedtuple
+
+
+def find_median(ary):
+	"""
+	Метод нахождения медианы - это такое число, что половина из элементов выборки больше него, а другая половина меньше.
+	:param ary:
+	:return:
+	"""
+	Number = namedtuple('Number', ['value', 'same_nums', 'low_nums', 'high_nums'])
+	numbers = []
+	for numb in set(ary):
+		high_nums = 0
+		low_nums = 0
+		same_nums = 0
+		for item in ary:
+			if item > numb:
+				high_nums += 1
+			elif item < numb:
+				low_nums += 1
+			elif item == numb:
+				same_nums += 1
+			else:
+				raise Exception('Wrong statement')
+		numbers.append(Number._make([numb, same_nums, low_nums, high_nums]))
+	for number in numbers:
+		if number.low_nums == number.high_nums or abs(number.high_nums - number.low_nums) < number.same_nums:
+			return number.value
+
+
+def main():
+	m = 100
+	ary = [random.randint(1, 200) for _ in range(2 * m + 1)]
+	print(ary)
+	med = find_median(ary)
+	print(med)
+	print(len(ary) // 2)
+	print(f'Программа работает корректно - {sorted(ary)[len(ary) // 2] == med}')
+
+
+if __name__ == '__main__':
+	main()
