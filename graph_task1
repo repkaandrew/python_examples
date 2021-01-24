@@ -1,0 +1,45 @@
+"""
+1. На улице встретились N друзей. Каждый пожал руку всем остальным друзьям (по одному разу). Сколько рукопожатий было?
+Примечание. Решите задачу при помощи построения графа.
+"""
+
+
+def create_graph(friend_numb):
+	"""
+	Генерируем матрицу графа, каждая вершина связана со всеми остальными
+	Считаем, что один человек жмет руку другому, т.е все связи (рукопожатия) однонаправленные
+	:param friend_numb:
+	:return: filled graph
+	"""
+	graph = []
+	for i in range(friend_numb):
+		graph.append([])
+		for j in range(i+1, friend_numb):
+			graph[i].append(1)
+	return graph
+
+
+def count_handshake(graph):
+	"""
+	# Каждая единица в матрице - рукопожатие
+	:param graph:
+	:return:
+	"""
+	hand_count = 0
+	for friend in graph:
+		for handshake in friend:
+			if handshake:
+				hand_count += 1
+	return hand_count
+
+
+def main():
+	friend_numb = int(input('Введите число друзей: '))
+	graph = create_graph(friend_numb)
+	hands_shakes = count_handshake(graph)
+	print(f'Всего было рукопожатий - {hands_shakes}')
+	print(f'Проверка прошла - {(friend_numb-1)*friend_numb/2 == hands_shakes}')
+
+
+if __name__ == '__main__':
+	main()
