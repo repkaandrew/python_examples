@@ -1,0 +1,49 @@
+"""
+1. Определение количества различных подстрок с использованием хеш-функции. Пусть на вход функции дана строка.
+Требуется вернуть количество различных подстрок в этой строке.
+Примечания:
+* в сумму не включаем пустую строку и строку целиком;
+* задача считается решённой, если в коде использована функция вычисления хеша (hash(), sha1()
+или любая другая из модуля hashlib)
+Например
+func("papa")
+вернёт 6, потому что в слове "papa" есть 6 уникальных подстрок: p, a, pa, ap, pap, apa.
+"""
+import hashlib
+
+
+def get_substrings(string: str) -> list:
+	"""
+	Функция составления списка различных подстрок в исходной строке
+	:param string:
+	:return:
+	"""
+	assert len(string) > 1, 'Strings must be at least 2 chars'
+	hash_lst = []
+
+	def get_hash_sha1(s: str) -> str:
+		return hashlib.sha1(s.encode('utf8')).hexdigest()
+
+	def get_sub(curr_str, h_lst) -> list:
+		s_lst = []
+		curr_str_hash = get_hash_sha1(curr_str)
+		if curr_str_hash not in h_lst and curr_str != ' ':
+			s_lst.append(curr_str)
+			h_lst.append(curr_str_hash)
+		if len(curr_str) == 1:
+			return s_lst
+		else:
+			return s_lst + get_sub(curr_str[:-1], h_lst) + get_sub(curr_str[1:], h_lst)
+
+	hash_lst.append(get_hash_sha1(string))
+	return get_sub(string, hash_lst)
+
+
+def main():
+	string = input('Ведите исходную строку: ')
+	sub_lst = get_substrings(string)
+	print(f'В строке "{string}" всего {len(sub_lst)} подстрок(а, и), список подстрок: {sub_lst}')
+
+
+if __name__ == '__main__':
+	main()
