@@ -1,0 +1,76 @@
+"""
+2. Написать программу сложения и умножения двух шестнадцатеричных чисел.
+При этом каждое число представляется как массив, элементы которого — цифры числа.
+Например, пользователь ввёл A2 и C4F. Нужно сохранить их как [‘A’, ‘2’] и [‘C’, ‘4’, ‘F’] соответственно.
+Сумма чисел из примера: [‘C’, ‘F’, ‘1’], произведение - [‘7’, ‘C’, ‘9’, ‘F’, ‘E’].
+"""
+import collections
+
+
+# Функция суммирования чисел в шестнадцатиричном формате, на вход принимает два итерируемых элемента
+def hex_add(arg1, arg2):
+	hex_nums = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
+	hex_num_1 = collections.deque(arg1)
+	hex_num_2 = collections.deque(arg2)
+	res = collections.deque()
+	next_digit = '0'
+	while len(hex_num_1) or len(hex_num_2) or next_digit != '0':
+		if len(hex_num_1):
+			hex1 = hex_num_1.pop()
+		else:
+			hex1 = '0'
+		if len(hex_num_2):
+			hex2 = hex_num_2.pop()
+		else:
+			hex2 = '0'
+		sum_val = hex_nums.index(hex1) + hex_nums.index(hex2) + hex_nums.index(next_digit)
+		res.appendleft(hex_nums[sum_val % 16])
+		next_digit = hex_nums[sum_val // 16]
+	return list(res)
+
+
+# Функция произведения чисел в шестнадцатиричном формате, на вход принимает два итерируемых элемента
+def hex_mul(arg1, arg2):
+	hex_nums = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
+	hex_num_1 = collections.deque(arg1)
+	hex_num_2 = collections.deque(arg2)
+	res = collections.deque()
+	i = 0
+	while len(hex_num_2):
+		hex_num_1_spam = collections.deque(hex_num_1)
+		hex2 = hex_num_2.pop()
+		res_spam = collections.deque()
+		j = 0
+		while len(hex_num_1_spam):
+			hex1 = hex_num_1_spam.pop()
+			mul = hex_nums.index(hex1) * hex_nums.index(hex2)
+			if not mul // 16:
+				mul_hex = hex_nums[mul % 16]
+			else:
+				mul_hex = hex_nums[mul // 16] + hex_nums[mul % 16]
+			for _ in range(j):
+				mul_hex += '0'
+			res_spam = hex_add(res_spam, mul_hex)
+			j += 1
+		for _ in range(i):
+			res_spam.append('0')
+		res = hex_add(res, res_spam)
+		i += 1
+	return list(res)
+
+
+def main():
+	hex_num_1 = input('Введите первое число в шестнадцатиричном формате \t').upper()
+	hex_num_2 = input('Введите второе число в шестнадцатиричном формате \t').upper()
+	hex_nums = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
+	spam = hex_num_2 + hex_num_1
+	for c in spam:
+		if c not in hex_nums:
+			print(f'Неправильный ввод {hex_num_1} {hex_num_2}')
+			return
+	print(f'Сумма чисел {hex_add(hex_num_1, hex_num_2)}')
+	print(f'Произведение чисел {hex_mul(hex_num_1, hex_num_2)}')
+
+
+if __name__ == '__main__':
+	main()
