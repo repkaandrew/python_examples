@@ -1,0 +1,26 @@
+# Given k numbers which are less than n, return the set of prime number among them
+# Note: The task is to write a program to print all Prime numbers in an Interval.
+# Definition: A prime number is a natural number greater than 1 that has no positive divisors other than 1 and itself.
+
+
+def is_prime(number: int) -> bool:
+	for i in range(1, number):
+		if i > 1 and not number % i:
+			return False
+	return True
+
+
+def get_prime_nums(number: int) -> list:
+	prime_lst = []
+	for i in range(1, number + 1):
+		if is_prime(i):
+			prime_lst.append(i)
+	return prime_lst
+
+
+def main() -> None:
+	print(get_prime_nums(10))
+
+
+if __name__ == "__main__":
+	main()
